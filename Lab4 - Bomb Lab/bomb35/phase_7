@@ -1,0 +1,46 @@
+=> 0x0000000000401203 <+0>:	push   %rbx
+   0x0000000000401204 <+1>:	callq  0x4015cc <read_line>
+   0x0000000000401209 <+6>:	mov    $0xa,%edx
+   0x000000000040120e <+11>:	mov    $0x0,%esi
+   0x0000000000401213 <+16>:	mov    %rax,%rdi
+   0x0000000000401216 <+19>:	callq  0x400be0 <strtol@plt>
+   0x000000000040121b <+24>:	mov    %rax,%rbx
+   0x000000000040121e <+27>:	lea    -0x1(%rax),%eax
+   0x0000000000401221 <+30>:	cmp    $0x3e8,%eax
+   0x0000000000401226 <+35>:	jbe    0x40122d <secret_phase+42>
+   0x0000000000401228 <+37>:	callq  0x401554 <explode_bomb>
+   0x000000000040122d <+42>:	mov    %ebx,%esi
+   0x000000000040122f <+44>:	mov    $0x605110,%edi
+   0x0000000000401234 <+49>:	callq  0x4011c5 <fun7>
+   0x0000000000401239 <+54>:	cmp    $0x1,%eax
+   0x000000000040123c <+57>:	je     0x401243 <secret_phase+64>
+   0x000000000040123e <+59>:	callq  0x401554 <explode_bomb>
+   0x0000000000401243 <+64>:	mov    $0x4024c8,%edi
+   0x0000000000401248 <+69>:	callq  0x400b30 <puts@plt>
+   0x000000000040124d <+74>:	callq  0x4016f2 <phase_defused>
+   0x0000000000401252 <+79>:	pop    %rbx
+   0x0000000000401253 <+80>:	retq  
+
+
+
+  >│0x4011c5 <fun7>                 sub    $0x8,%rsp         
+   │0x4011c9 <fun7+4>               test   %rdi,%rdi         
+   │0x4011cc <fun7+7>               je     0x4011f9 <fun7+52>
+   │0x4011ce <fun7+9>               mov    (%rdi),%edx       
+   │0x4011d0 <fun7+11>              cmp    %esi,%edx         
+   │0x4011d2 <fun7+13>              jle    0x4011e1 <fun7+28>
+   │0x4011d4 <fun7+15>              mov    0x8(%rdi),%rdi    
+   │0x4011d8 <fun7+19>              callq  0x4011c5 <fun7>   
+   │0x4011dd <fun7+24>              add    %eax,%eax         
+   │0x4011df <fun7+26>              jmp    0x4011fe <fun7+57>
+   │0x4011e1 <fun7+28>              mov    $0x0,%eax         
+   │0x4011e6 <fun7+33>              cmp    %esi,%edx         
+   │0x4011e8 <fun7+35>              je     0x4011fe <fun7+57>
+   │0x4011ea <fun7+37>              mov    0x10(%rdi),%rdi   
+   │0x4011ee <fun7+41>              callq  0x4011c5 <fun7>   
+   │0x4011f3 <fun7+46>              lea    0x1(%rax,%rax,1),%eax
+   │0x4011f7 <fun7+50>              jmp    0x4011fe <fun7+57>
+   │0x4011f9 <fun7+52>              mov    $0xffffffff,%eax  
+   │0x4011fe <fun7+57>              add    $0x8,%rsp         
+   │0x401202 <fun7+61>              retq                     
+B+ │
