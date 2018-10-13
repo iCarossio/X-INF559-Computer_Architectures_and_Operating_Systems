@@ -1,0 +1,143 @@
+#/* $begin ncopy-ys */
+##################################################################
+# ncopy.ys - Copy a src block of len words to dst.
+# Return the number of positive words (>0) contained in src.
+#
+# Antoine Carossio antoine.carossio
+#
+# Describe how and why you modified the baseline code.
+# 1. Included iaddq statements to lessen steps
+# 2. Added one loop unroller (this took forever)
+# 3. switched up registers to avoid criss-crossing (I forget the technical term)
+# 4. Added two more loop unrollers (this took two forevers) 
+# 5. Added unroller function so unrolling could be done in factors (inspired by CMU lecture on YouTube)
+# 6. Reordered some mov instructions that cause bubbles
+# 7. Reordered functions (there's still bad jumping sorry)
+# 8. Added functions to handle up to 3 extras since any multiples
+# of four should be handled by the first half of the program
+# 9. Added fifth and sixth factor loop unrolling, deleted unnecessary instructions. 
+# 10. Added extra value handlers 4 and 5
+# 11. Made extra handlers preemtively set registers a function early to avoid bubbles
+#
+# In the end, this program really just assesses 4 indices at once (maximum) and adds to count if they're positive. The idea is simple but getting it to work was near impossible.
+#
+##################################################################
+# Do not modify this portion
+# Function prologue.
+# %rdi = src, %rsi = dst, %rdx = len
+ncopy:
+
+##################################################################
+# You can modify this portion
+    # Loop header
+    
+    
+    iaddq  $-6, %rdx        # len -= 6
+    jl     Extra            # Check for extras
+
+Loop:
+    mrmovq (%rdi), %r10 # read val from src...
+    mrmovq 8(%rdi), %r11    # read next val from src
+    rmmovq %r10, (%rsi) # src[i] to dst
+    andq   %r10, %r10   # src[i] <= 0?
+    jle    Npos0        # if so, goto Npos0:
+    iaddq  $1, %rax     # count++
+
+Npos0:  
+    rmmovq %r11, 8(%rsi)    # src[i+1] to dst
+    andq   %r11, %r11       # is %r11 <= 0?
+    jle    Npos1            # if so, go to Npos1
+    iaddq  $1, %rax         # count++
+
+Npos1: 
+    mrmovq 16(%rdi), %r10   # src[i+2] to %r10
+    mrmovq 24(%rdi), %r11   # src[i+3] to %r11
+    rmmovq %r10, 16(%rsi)   # src[i+2] to dst[i+2]
+    andq   %r10, %r10       # src[i+2] <= 0? 
+    jle    Npos2            # if so, go to Npos2
+    iaddq  $1, %rax         # count ++
+
+Npos2: 
+    rmmovq %r11, 24(%rsi)   # src[i+3] to dst
+    andq   %r11, %r11       # src[i+3] <= 0? 
+    jle    Npos3            # if so, go to Unroller
+    iaddq  $1, %rax         # count++ 
+    
+Npos3: 
+    mrmovq 32(%rdi), %r10   # src[i+4] to %r10
+    mrmovq 40(%rdi), %r11   # src[i+5] to %r11
+    rmmovq %r10, 32(%rsi)   # src[i+4] to dst[i+4]
+    andq   %r10, %r10       # src[i+4] <= 0?
+    jle    Npos4            # if so, go to Npos4
+    iaddq  $1, %rax         # count++
+
+Npos4: 
+    rmmovq %r11, 40(%rsi)   # src[i+5] to dst
+    andq   %r11, %r11       # is %r11 <= 0?
+    jle    Unroller         # if so, go to Unroller
+    iaddq  $1, %rax         # count++
+
+
+Unroller: 
+    iaddq $48, %rdi         # start unrolling src at [i+6]
+    iaddq $48, %rsi         # start unrolling dst at [i+6]
+    iaddq $-6, %rdx         # len is now 6 less
+    jge   Loop              # if we're not done, start unrolling
+
+Extra:  
+    iaddq $6, %rdx          # return len to the right value
+
+Extra0:
+    iaddq  $-1, %rdx        # len--
+    jl     Done             # finish up if no extras
+    mrmovq (%rdi), %r10     # this basically does
+    mrmovq 8(%rdi), %r11    # the same thing as 
+    rmmovq %r10, (%rsi)     # the loop unrollers
+    andq   %r10, %r10       # but starts 6 indices later.
+    jle    Extra1           # pretty neat, huh?
+    iaddq  $1, %rax         # count++
+    
+Extra1: 
+    iaddq  $-1, %rdx        # len-- 
+    jl     Done             # finish up if no extras 
+    rmmovq %r11, 8(%rsi)    # src [i+1] to dst[i+1]
+    andq   %r11, %r11       # src [i+1] <= 0?
+    jle    Extra2           # if so, go to Extra2
+    iaddq  $1, %rax         # count++ 
+
+Extra2: 
+    iaddq  $-1, %rdx        # len-- 
+    jl     Done             # finish up if no extras
+    mrmovq 16(%rdi), %r10   # src[i+2] to %r10 
+    mrmovq 24(%rdi), %r11   # src[i+3] to %r11
+    rmmovq %r10, 16(%rsi)   # src[i+2] to dst[i+2] 
+    andq   %r10, %r10       # src[i+2] <= 0? 
+    jle    Extra3           # if so, go to Extra3
+    iaddq  $1, %rax         # count++
+
+Extra3: 
+    iaddq  $-1, %rdx        # len--
+    jl     Done         # finish up if no extras 
+    rmmovq %r11, 24(%rsi)   # src[i+3] to dst[i+3]
+    andq   %r11, %r11       # src[i+3] <= 0? 
+    jle    Extra4           # if so, go to Extra4 
+    iaddq  $1, %rax 
+
+Extra4: 
+    iaddq  $-1, %rdx        # len--
+    jl     Done             # finish up if no extras 
+    mrmovq 32(%rdi), %r10   # src[i+4] to %r10 
+    rmmovq %r10, 32(%rsi)   # src[i+4] to dst[i+4] 
+    andq   %r10, %r10       # src[i+4] <= 0? 
+    jle    Done             # if so, finish up
+    iaddq  $1, %rax         # count++
+
+##################################################################
+# Do not modify the following section of code
+# Function epilogue.
+Done:
+    ret
+##################################################################
+# Keep the following label at the end of your function
+End:
+#/* $end ncopy-ys */

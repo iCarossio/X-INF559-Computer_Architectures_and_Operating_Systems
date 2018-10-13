@@ -1,0 +1,15 @@
+#####################################################################
+# INF 559 Architecture Lab
+# Handout files for students
+######################################################################
+
+This directory contains the files that you need for the CS:APP
+architecture lab.
+
+******
+Files:
+******
+
+README			This file
+sim.tar			Archive of the Y86-64 tools in tar format
+simguide.{ps,pdf}	CS:APP Guide to Simulators document	

@@ -1,0 +1,15 @@
+# Antoine Carossio antoine.carossio
+  mrmovq x, %rbx           # read x into %rbx
+  irmovq $5, %rcx          # load 5 into %rcx
+  subq   %rbx, %rcx        # %rcx = %rcx (5) - %rbx (x)
+  jge    Lend              # if 5-x > 0 <=> x<5
+  irmovq $1, %rcx          # load 1 into %rcx
+  addq   %rcx, %rbx        # x = x+1
+Lend:
+  rmmovq %rbx, y
+  halt
+
+
+.pos 256
+x: .quad 0x0c
+y: .quad 0x00

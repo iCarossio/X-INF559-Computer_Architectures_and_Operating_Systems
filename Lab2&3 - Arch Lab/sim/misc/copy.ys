@@ -1,0 +1,38 @@
+# Antoine Carossio antoine.carossio
+
+  mrmovq len, %rsi           # Read len into %rsi
+  irmovq $0, %rax            # Initialize result with 0  
+  irmovq $0, %rbx            # Set src indice to 0
+  irmovq $8, %r8             # Save 8 into the register
+  irmovq $1, %r10            # Save 1 into the register
+
+Loop:
+  mrmovq src(%rbx), %rcx
+  rmmovq %rcx, dest(%rbx)
+  xorq   %rcx, %rax
+  addq   %r8, %rbx
+  subq   %r10, %rsi
+  jne    Loop
+
+rmmovq %rax, result
+halt
+
+.align 8
+# Source block
+src:
+        .quad 0x00a
+        .quad 0x0b0
+        .quad 0xc00
+
+# Destination block
+dest:
+        .quad 0x111
+        .quad 0x222
+        .quad 0x333
+
+# Length
+len:
+        .quad 0x3
+
+result:
+        .quad 0x0
